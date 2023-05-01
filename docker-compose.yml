@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: './frontend'
+    container_name: docker-nuxt-nest-frontend
+    restart: unless-stopped
+    networks:
+      - docker-nuxt-nest-network
+  backend:
+    build: './backend'
+    container_name: docker-nuxt-nest-backend
+    restart: unless-stopped
+    networks:
+      - docker-nuxt-nest-network
+      
+  nginx:
+    image: nginx:stable-alpine
+    container_name: docker-nuxt-nest-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - docker-nuxt-nest-network
+
+networks:
+  docker-nuxt-nest-network:
+    driver: bridge
